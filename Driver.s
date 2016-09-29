@@ -179,13 +179,35 @@
 #define	CTRL_FIRE			32
 #define	CTRL_FIRE2		64
 
+#ifdef TARGET_TELEMON
+*=$700-20
+	.byt $01,$00		; non-C64 marker
+;2
+    .byt "o", "r", "i"      ; "o65" MAGIC number :$6f, $36, $35
+	.byt 1			; version
+	;5
+	.byt $00, $00	; mode word mode0, mode1
+	.byt $00, $00		; CPU type
+	.byt $00, $00		; operating system id
+;11
+	.byt $00 ; reserved
+;12	
+	.byt %01001001 ; Auto, direct, data
+;13	
+	.byt <start_adress,>start_adress ; loading adress
+	.byt <end_adress,>end_adress ; end of loading adress
+	.byt <start_adress,>start_adress ; starting adress
+
+start_adress
+#endif
+
  .zero
 *=$00
 
 #include "ZeroPage.s"
 
  .text
-*=$500
+*=$700
 
 Driver	jmp Driver2
 ;$503 - Tables to $5FF
@@ -233,7 +255,15 @@ StarfieldStep
  .dsb 420,0	;40*18,0
 
 
-Driver2	lda #30
+Driver2	
+#ifdef TARGET_TELEMON
+; Switch off via2
+	lda #0+32
+	sta $30e
+	lda #0+32+64
+	sta $32e
+#endif
+	lda #30
 	sta $BFDF
 	jsr ClearLowerScreen
 	lda #128
@@ -250,13 +280,14 @@ loop1	lda BB80Restoration,x
 	lda #00
 	sta usm_SunMoonYPos
 	sta usm_RowIndex
-	
+
 .(
 loop1	lda KeyRegister
 	bne loop1
 loop2	lda KeyRegister
 	beq loop2
 .)
+
 	jsr ClearScreen
 GameStartLoop
 	sei
@@ -624,6 +655,7 @@ HiresScreen
 #include "TwilighteLogo.s"
 ScorePanelArea	;b770
 #include "ScorePanel.s"
+end_adress
 ;BD88-BF3F - Fill remainder of screen with 0
 ;RestOfHires
 ;.dsb $BF40-*

@@ -43,6 +43,9 @@ IRQDriver	;Backup Registers
 	;Reset IRQ
 	cmp VIA_T1CL
 	
+	
+
+
 	;Read keyboard
 	lda #00
 	sta KeyRegister
@@ -75,6 +78,7 @@ loop1 	lda KeyRow,x
 skip1	dex
 	bpl loop1
 .)
+
 	;Read Joysticks if configured and in game
 	lda GameFlag
 .(
