@@ -179,7 +179,7 @@
 #define	CTRL_FIRE			32
 #define	CTRL_FIRE2		64
 
-#ifdef TARGET_TELEMON
+#ifdef TARGET_ORIX
 *=$700-20
 	.byt $01,$00		; non-C64 marker
 ;2
@@ -256,7 +256,7 @@ StarfieldStep
 
 
 Driver2	
-#ifdef TARGET_TELEMON
+#ifdef TARGET_ORIX
 ; Switch off via2
 	lda #0+32
 	sta $30e
@@ -283,7 +283,17 @@ loop1	lda BB80Restoration,x
 
 .(
 loop1	lda KeyRegister
+  bne loop1
+#ifdef TARGET_ORIX
+	/*
+  lda KeyRegister
+	cmp #27
 	bne loop1
+  rts
+  */
+#else
+	
+#endif  
 loop2	lda KeyRegister
 	beq loop2
 .)
@@ -378,7 +388,11 @@ NextLevelLoop
 	sta GameAction
 	
 
-GameLoop	jsr SpeedDampener
+GameLoop
+ ; rts
+  ;jsr testExit
+
+	jsr SpeedDampener
 ;	jsr TestWriteBinaryKeys
 	jsr NPCControl
 	jsr HeroControl
@@ -587,7 +601,26 @@ SetupLevel
 	sta SecondCounter
 	rts
 
-
+testExit
+#ifdef TARGET_ORIX
+	lda KeyRegister
+	cmp #27
+	bne restart
+  ; quit 
+  sei 
+  lda $fffe
+  sta $02fb
+  
+  lda $ffff
+  sta $02fc
+  ;pla
+  ;pla
+  cli 
+  rts
+restart  
+#endif
+rts
+  
 ;TestWriteBinaryKeys
 ;	ldx #6
 ;.(
