@@ -647,15 +647,15 @@ rts
 #include "GraphicBlocks.s"
 #include "GraphicSprites.s"	;gfx in shared/euph1007/disks/ssm73_*/npcs.mem
 Stormlord_Map
-#include "Stormlord_Map.s"
+#include "stormlord_map.s"
 Stormlord_Map_End
 #include "MapCode.s"
 #include "HeroCode.s"
 #include "IRQRoutine.s"
 #include "HeroFire.s"
-#include "Unpack.s"
+#include "unpack.s"
 #include "sfx.s"
-#include "sfx_scripts.s"
+#include "SFX_Scripts.s"
 #include "PackedLevel1.s"
 #include "PackedLevel2.s"
 #include "PackedLevel3.s"
